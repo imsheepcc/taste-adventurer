@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>功能测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f0f0f0; }
+        .test-btn { padding: 10px 20px; margin: 10px; background: #FFD100; border: none; border-radius: 5px; cursor: pointer; }
+        .result { margin: 10px 0; padding: 10px; background: white; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>美食地图功能测试</h1>
+    
+    <button class="test-btn" onclick="testSwitchPage()">测试页面切换</button>
+    <button class="test-btn" onclick="testRandomRecommend()">测试随机推荐</button>
+    <button class="test-btn" onclick="testRestaurantData()">测试餐厅数据</button>
+    
+    <div id="testResults"></div>
+
+    <script src="app-complete.js"></script>
+    <script>
+        function testSwitchPage() {
+            try {
+                console.log('测试页面切换功能...');
+                if (typeof switchPage === 'function') {
+                    document.getElementById('testResults').innerHTML += '<div class="result">✅ switchPage 函数存在</div>';
+                } else {
+                    document.getElementById('testResults').innerHTML += '<div class="result">❌ switchPage 函数不存在</div>';
+                }
+            } catch (e) {
+                document.getElementById('testResults').innerHTML += '<div class="result">❌ 页面切换测试失败: ' + e.message + '</div>';
+            }
+        }
+
+        function testRandomRecommend() {
+            try {
+                console.log('测试随机推荐功能...');
+                if (typeof randomRecommend === 'function') {
+                    document.getElementById('testResults').innerHTML += '<div class="result">✅ randomRecommend 函数存在</div>';
+                } else {
+                    document.getElementById('testResults').innerHTML += '<div class="result">❌ randomRecommend 函数不存在</div>';
+                }
+            } catch (e) {
+                document.getElementById('testResults').innerHTML += '<div class="result">❌ 随机推荐测试失败: ' + e.message + '</div>';
+            }
+        }
+
+        function testRestaurantData() {
+            try {
+                console.log('测试餐厅数据...');
+                if (typeof restaurants !== 'undefined' && restaurants.length > 0) {
+                    document.getElementById('testResults').innerHTML += '<div class="result">✅ 餐厅数据加载成功，共 ' + restaurants.length + ' 家餐厅</div>';
+                    document.getElementById('testResults').innerHTML += '<div class="result">第一家餐厅: ' + restaurants[0].name + '</div>';
+                } else {
+                    document.getElementById('testResults').innerHTML += '<div class="result">❌ 餐厅数据加载失败</div>';
+                }
+            } catch (e) {
+                document.getElementById('testResults').innerHTML += '<div class="result">❌ 餐厅数据测试失败: ' + e.message + '</div>';
+            }
+        }
+
+        // 页面加载完成后自动运行测试
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('testResults').innerHTML = '<div class="result">🚀 开始功能测试...</div>';
+            setTimeout(() => {
+                testSwitchPage();
+                testRandomRecommend();
+                testRestaurantData();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

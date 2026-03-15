@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>逐步调试</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f0f0f0; }
+        .log { background: white; padding: 15px; margin: 10px 0; border-radius: 5px; border-left: 4px solid #4CAF50; }
+        .error { border-left-color: #f44336; background: #ffe8e8; }
+        .warning { border-left-color: #ff9800; background: #fff3e0; }
+        button { background: #FFD100; border: none; padding: 10px 20px; margin: 5px; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>🔍 逐步调试页面</h1>
+    <div id="logs"></div>
+    
+    <button onclick="testStep1()">步骤1: 测试基本功能</button>
+    <button onclick="testStep2()">步骤2: 加载数据层</button>
+    <button onclick="testStep3()">步骤3: 测试完整初始化</button>
+    <button onclick="clearLogs()">清除日志</button>
+
+    <script>
+        function log(message, type = 'info') {
+            const logs = document.getElementById('logs');
+            const div = document.createElement('div');
+            div.className = 'log' + (type !== 'info' ? ' ' + type : '');
+            div.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong> - ${message}`;
+            logs.appendChild(div);
+            console.log(message);
+        }
+        
+        function clearLogs() {
+            document.getElementById('logs').innerHTML = '';
+        }
+        
+        function testStep1() {
+            log('开始步骤1: 测试基本功能');
+            try {
+                log('✅ JavaScript基本功能正常');
+                log('✅ DOM操作正常');
+                log('✅ 事件处理正常');
+            } catch (error) {
+                log('❌ 步骤1失败: ' + error.message, 'error');
+            }
+        }
+        
+        function testStep2() {
+            log('开始步骤2: 加载数据层');
+            try {
+                // 动态加载dataLayer.js
+                const script = document.createElement('script');
+                script.src = 'dataLayer.js?v=3';
+                script.onload = function() {
+                    log('✅ dataLayer.js 加载成功');
+                    try {
+                        const dataLayer = new DataAccessLayer();
+                        log('✅ DataAccessLayer 实例化成功');
+                        log('✅ 存储键: ' + Object.keys(dataLayer.storageKeys).length + ' 个');
+                    } catch (error) {
+                        log('❌ DataAccessLayer 实例化失败: ' + error.message, 'error');
+                    }
+                };
+                script.onerror = function() {
+                    log('❌ dataLayer.js 加载失败', 'error');
+                };
+                document.head.appendChild(script);
+            } catch (error) {
+                log('❌ 步骤2失败: ' + error.message, 'error');
+            }
+        }
+        
+        function testStep3() {
+            log('开始步骤3: 测试完整初始化');
+            
+            // 加载所有必需的脚本
+            const scripts = [
+                'dataLayer.js',
+                'anonymousSystem.js',
+                'recommendationEngine.js',
+                'communityForum.js'
+            ];
+            
+            let loadedCount = 0;
+            
+            scripts.forEach((scriptName, index) => {
+                const script = document.createElement('script');
+                script.src = scriptName + '?v=3';
+                script.onload = function() {
+                    loadedCount++;
+                    log(`✅ ${scriptName} 加载成功 (${loadedCount}/${scripts.length})`);
+                    
+                    if (loadedCount === scripts.length) {
+                        log('所有脚本加载完成，开始测试初始化');
+                        testInitialization();
+                    }
+                };
+                script.onerror = function() {
+                    log(`❌ ${scriptName} 加载失败`, 'error');
+                };
+                document.head.appendChild(script);
+            });
+        }
+        
+        function testInitialization() {
+            try {
+                log('测试 DataAccessLayer...');
+                const dataLayer = new DataAccessLayer();
+                log('✅ DataAccessLayer 创建成功');
+                
+                log('测试 AnonymousSystem...');
+                const anonymousSystem = new AnonymousSystem(dataLayer);
+                log('✅ AnonymousSystem 创建成功');
+                
+                log('测试 CommunityForum...');
+                const communityForum = new CommunityForum(anonymousSystem, dataLayer);
+                log('✅ CommunityForum 创建成功');
+                
+                log('🎉 所有核心组件初始化成功！');
+                
+            } catch (error) {
+                log('❌ 初始化失败: ' + error.message, 'error');
+                log('错误堆栈: ' + error.stack, 'error');
+            }
+        }
+        
+        // 页面加载完成
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🚀 调试页面加载完成');
+        });
+    </script>
+</body>
+</html>

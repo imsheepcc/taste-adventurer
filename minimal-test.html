@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>最小测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #FFD100;
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .nav-test {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .nav-btn {
+            background: #FFD100;
+            color: #333;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .nav-btn:hover {
+            background: #FFA500;
+        }
+        .nav-btn.active {
+            background: #FF8C00;
+            color: white;
+        }
+        .page {
+            display: none;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .page.active {
+            display: block;
+        }
+        .test-result {
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 4px solid #4CAF50;
+        }
+        .error {
+            background: #ffe8e8;
+            border-left-color: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🍜 最小功能测试</h1>
+        <p>测试基本的页面切换功能</p>
+        
+        <div class="nav-test">
+            <button class="nav-btn active" onclick="showPage('home')">首页</button>
+            <button class="nav-btn" onclick="showPage('recommend')">推荐</button>
+            <button class="nav-btn" onclick="showPage('community')">社区</button>
+            <button class="nav-btn" onclick="showPage('map')">地图</button>
+        </div>
+        
+        <div id="status" class="test-result">
+            JavaScript 状态: <span id="js-status">检测中...</span>
+        </div>
+        
+        <div id="homePage" class="page active">
+            <h2>🏠 首页</h2>
+            <p>这是首页内容</p>
+            <button onclick="testFunction('home')">测试首页功能</button>
+            <div id="home-result"></div>
+        </div>
+        
+        <div id="recommendPage" class="page">
+            <h2>🎯 推荐页面</h2>
+            <p>这是推荐页面内容</p>
+            <button onclick="testFunction('recommend')">测试推荐功能</button>
+            <div id="recommend-result"></div>
+        </div>
+        
+        <div id="communityPage" class="page">
+            <h2>💬 社区页面</h2>
+            <p>这是社区页面内容</p>
+            <button onclick="testFunction('community')">测试社区功能</button>
+            <div id="community-result"></div>
+        </div>
+        
+        <div id="mapPage" class="page">
+            <h2>🗺️ 地图页面</h2>
+            <p>这是地图页面内容</p>
+            <button onclick="testFunction('map')">测试地图功能</button>
+            <div id="map-result"></div>
+        </div>
+    </div>
+
+    <script>
+        // 页面加载完成后立即测试
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('页面DOM加载完成');
+            document.getElementById('js-status').textContent = '✅ JavaScript 正常工作';
+            document.getElementById('js-status').style.color = 'green';
+        });
+        
+        // 页面切换函数
+        function showPage(pageName) {
+            console.log('切换到页面:', pageName);
+            
+            // 隐藏所有页面
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // 移除所有按钮的active状态
+            const buttons = document.querySelectorAll('.nav-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // 显示目标页面
+            const targetPage = document.getElementById(pageName + 'Page');
+            if (targetPage) {
+                targetPage.classList.add('active');
+                console.log('页面切换成功:', pageName);
+            } else {
+                console.error('页面不存在:', pageName);
+            }
+            
+            // 激活对应按钮
+            event.target.classList.add('active');
+        }
+        
+        // 测试功能函数
+        function testFunction(pageName) {
+            console.log('测试功能:', pageName);
+            const resultDiv = document.getElementById(pageName + '-result');
+            if (resultDiv) {
+                resultDiv.innerHTML = `<div class="test-result">✅ ${pageName} 页面功能正常！时间: ${new Date().toLocaleTimeString()}</div>`;
+            }
+        }
+        
+        // 全局错误处理
+        window.addEventListener('error', function(e) {
+            console.error('JavaScript错误:', e.error);
+            document.getElementById('js-status').textContent = '❌ JavaScript 出现错误: ' + e.message;
+            document.getElementById('js-status').style.color = 'red';
+        });
+        
+        console.log('脚本加载完成');
+    </script>
+</body>
+</html>

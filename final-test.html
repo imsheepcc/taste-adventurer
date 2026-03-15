@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>最终测试</title>
+    <link rel="stylesheet" href="styles.css?v=7">
+    <style>
+        .test-container {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 10000;
+            max-width: 300px;
+        }
+        .test-btn {
+            display: block;
+            width: 100%;
+            margin: 5px 0;
+            padding: 8px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .test-result {
+            font-size: 12px;
+            margin: 2px 0;
+            padding: 2px;
+        }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <!-- 测试面板 -->
+    <div class="test-container">
+        <h4>功能测试面板</h4>
+        <button class="test-btn" onclick="runAllTests()">运行所有测试</button>
+        <button class="test-btn" onclick="testBasicFunctions()">测试基本函数</button>
+        <button class="test-btn" onclick="testPageSwitch()">测试页面切换</button>
+        <button class="test-btn" onclick="clearResults()">清除结果</button>
+        <div id="testResults"></div>
+    </div>
+
+    <!-- 原始内容 -->
+    <div class="welcome-overlay" id="welcomeOverlay" style="display: none;">
+        <div class="welcome-content">
+            <h1>🍜 欢迎来到美食地图！</h1>
+            <p class="emoji-decoration">开始你的美食之旅吧~ ✨</p>
+        </div>
+    </div>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-logo" onclick="switchPage('home')">🍜 美食地图</a>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="#" class="nav-link active" onclick="switchPage('home')">首页</a></li>
+                <li class="nav-item"><a href="#" class="nav-link" onclick="switchPage('recommend')">趣味推荐</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <div class="page-content active" id="homePage">
+            <div class="container">
+                <header class="header">
+                    <h1>🍜 大学城美食地图 🍕</h1>
+                </header>
+                <div class="quick-actions">
+                    <button class="btn-primary" onclick="randomRecommend()">🎲 随机推荐</button>
+                    <button class="btn-secondary" onclick="toggleFilter()">🔍 筛选美食</button>
+                </div>
+                <div class="restaurant-list" id="restaurantList"></div>
+            </div>
+        </div>
+
+        <div class="page-content" id="recommendPage">
+            <div class="container">
+                <header class="page-header">
+                    <h1>🎯 趣味推荐</h1>
+                </header>
+                <div class="recommend-tabs">
+                    <button class="tab-btn active" onclick="switchRecommendTab('wheel')">🎰 转盘推荐</button>
+                </div>
+                <div class="tab-content active" id="wheelTab">
+                    <button class="btn-spin" onclick="spinWheel()">开始转盘</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app-complete.js?v=7"></script>
+    <script>
+        function addTestResult(message, isSuccess = true) {
+            const results = document.getElementById('testResults');
+            const div = document.createElement('div');
+            div.className = `test-result ${isSuccess ? 'success' : 'error'}`;
+            div.textContent = message;
+            results.appendChild(div);
+        }
+
+        function clearResults() {
+            document.getElementById('testResults').innerHTML = '';
+        }
+
+        function testBasicFunctions() {
+            clearResults();
+            addTestResult('开始测试基本函数...');
+            
+            const functions = ['switchPage', 'randomRecommend', 'toggleFilter', 'spinWheel'];
+            functions.forEach(func => {
+                if (typeof window[func] === 'function') {
+                    addTestResult(`✅ ${func} 存在`, true);
+                } else {
+                    addTestResult(`❌ ${func} 不存在`, false);
+                }
+            });
+
+            if (typeof restaurants !== 'undefined' && restaurants.length > 0) {
+                addTestResult(`✅ 餐厅数据: ${restaurants.length}条`, true);
+            } else {
+                addTestResult('❌ 餐厅数据缺失', false);
+            }
+        }
+
+        function testPageSwitch() {
+            addTestResult('测试页面切换...');
+            try {
+                switchPage('recommend');
+                addTestResult('✅ 页面切换成功', true);
+                setTimeout(() => {
+                    switchPage('home');
+                    addTestResult('✅ 返回首页成功', true);
+                }, 1000);
+            } catch (e) {
+                addTestResult(`❌ 页面切换失败: ${e.message}`, false);
+            }
+        }
+
+        function runAllTests() {
+            clearResults();
+            testBasicFunctions();
+            setTimeout(() => testPageSwitch(), 1000);
+        }
+
+        // 页面加载完成后自动测试
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                addTestResult('🚀 页面加载完成');
+                testBasicFunctions();
+            }, 500);
+        });
+
+        // 捕获所有错误
+        window.addEventListener('error', function(e) {
+            addTestResult(`❌ JavaScript错误: ${e.message}`, false);
+        });
+    </script>
+</body>
+</html>

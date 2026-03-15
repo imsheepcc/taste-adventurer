@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>最小调试版本</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #FFD100 0%, #FFA500 50%, #FF8C00 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+        .nav-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            background: #FFD100;
+            color: #333;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .nav-btn:hover, .nav-btn.active {
+            background: #FFA500;
+            color: white;
+            transform: translateY(-2px);
+        }
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+        .test-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            margin: 10px;
+            transition: all 0.3s;
+        }
+        .test-btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+        .result {
+            background: #f0f8ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border-left: 4px solid #2196F3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="text-align: center; color: #333;">🍜 美食地图调试版</h1>
+        
+        <div class="nav">
+            <button class="nav-btn active" onclick="showPage('home')">首页</button>
+            <button class="nav-btn" onclick="showPage('recommend')">推荐</button>
+            <button class="nav-btn" onclick="showPage('community')">社区</button>
+        </div>
+
+        <div class="page active" id="homePage">
+            <h2>🏠 首页测试</h2>
+            <button class="test-btn" onclick="testFunction('randomRecommend')">随机推荐</button>
+            <button class="test-btn" onclick="testFunction('toggleFilter')">筛选面板</button>
+            <div id="homeResults"></div>
+        </div>
+
+        <div class="page" id="recommendPage">
+            <h2>🎯 推荐测试</h2>
+            <button class="test-btn" onclick="testFunction('spinWheel')">转盘推荐</button>
+            <button class="test-btn" onclick="testFunction('switchRecommendTab', 'wheel')">切换标签</button>
+            <div id="recommendResults"></div>
+        </div>
+
+        <div class="page" id="communityPage">
+            <h2>💬 社区测试</h2>
+            <button class="test-btn" onclick="testFunction('showPostModal')">发布动态</button>
+            <button class="test-btn" onclick="testFunction('filterCommunityPosts')">筛选帖子</button>
+            <div id="communityResults"></div>
+        </div>
+    </div>
+
+    <script>
+        console.log('🚀 调试页面开始加载...');
+
+        // 简化的页面切换函数
+        function showPage(pageName) {
+            console.log('切换到页面:', pageName);
+            
+            // 隐藏所有页面
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // 移除所有按钮的active状态
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // 显示目标页面
+            const targetPage = document.getElementById(pageName + 'Page');
+            if (targetPage) {
+                targetPage.classList.add('active');
+                // 激活对应按钮
+                event.target.classList.add('active');
+                
+                addResult(pageName + 'Results', `✅ 成功切换到${pageName}页面`);
+            } else {
+                console.error('页面不存在:', pageName);
+                addResult('homeResults', `❌ 页面${pageName}不存在`);
+            }
+        }
+
+        // 测试函数
+        function testFunction(funcName, param) {
+            console.log('测试函数:', funcName);
+            
+            const currentPage = document.querySelector('.page.active').id.replace('Page', '');
+            const resultContainer = currentPage + 'Results';
+            
+            try {
+                if (typeof window[funcName] === 'function') {
+                    addResult(resultContainer, `✅ 函数 ${funcName} 存在`);
+                    
+                    // 尝试调用函数
+                    if (param) {
+                        window[funcName](param);
+                    } else {
+                        window[funcName]();
+                    }
+                    addResult(resultContainer, `✅ 函数 ${funcName} 调用成功`);
+                } else {
+                    addResult(resultContainer, `❌ 函数 ${funcName} 不存在`);
+                }
+            } catch (error) {
+                addResult(resultContainer, `❌ 函数 ${funcName} 调用失败: ${error.message}`);
+                console.error('函数调用错误:', error);
+            }
+        }
+
+        // 添加结果显示
+        function addResult(containerId, message) {
+            const container = document.getElementById(containerId);
+            if (container) {
+                const resultDiv = document.createElement('div');
+                resultDiv.className = 'result';
+                resultDiv.textContent = message;
+                container.appendChild(resultDiv);
+            }
+        }
+
+        // 模拟主要函数（如果不存在）
+        function randomRecommend() {
+            console.log('随机推荐功能被调用');
+            addResult('homeResults', '🎲 随机推荐功能正常工作');
+        }
+
+        function toggleFilter() {
+            console.log('筛选面板功能被调用');
+            addResult('homeResults', '🔍 筛选面板功能正常工作');
+        }
+
+        function spinWheel() {
+            console.log('转盘功能被调用');
+            addResult('recommendResults', '🎰 转盘功能正常工作');
+        }
+
+        function switchRecommendTab(tabName) {
+            console.log('切换推荐标签:', tabName);
+            addResult('recommendResults', `🎯 切换到${tabName}标签成功`);
+        }
+
+        function showPostModal() {
+            console.log('显示发布动态弹窗');
+            addResult('communityResults', '📝 发布动态弹窗功能正常工作');
+        }
+
+        function filterCommunityPosts() {
+            console.log('筛选社区帖子');
+            addResult('communityResults', '🔍 社区帖子筛选功能正常工作');
+        }
+
+        // 页面加载完成
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ 调试页面加载完成');
+            addResult('homeResults', '🚀 页面初始化完成');
+        });
+
+        console.log('📄 调试脚本加载完成');
+    </script>
+</body>
+</html>

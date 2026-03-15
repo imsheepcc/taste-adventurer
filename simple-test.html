@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简单测试</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="main-content">
+        <div class="container">
+            <h1>🍜 测试页面</h1>
+            <button onclick="testFunction()" class="btn-primary">点击测试</button>
+            <div id="test-result"></div>
+        </div>
+    </div>
+    
+    <script>
+        function testFunction() {
+            document.getElementById('test-result').innerHTML = '✅ JavaScript 工作正常！';
+            console.log('测试函数执行成功');
+        }
+        
+        // 测试页面加载
+        window.addEventListener('load', function() {
+            console.log('页面加载完成');
+            document.getElementById('test-result').innerHTML = '页面已加载，点击按钮测试功能';
+        });
+    </script>
+</body>
+</html>

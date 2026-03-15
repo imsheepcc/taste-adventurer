@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大学城美食地图 - 调试版</title>
+    <link rel="stylesheet" href="styles.css?v=4">
+</head>
+<body>
+    <!-- 欢迎动画 - 简化版 -->
+    <div class="welcome-overlay" id="welcomeOverlay" style="display: none;">
+        <div class="welcome-content">
+            <h1>🍜 欢迎来到美食地图！</h1>
+            <p class="emoji-decoration">开始你的美食之旅吧~ ✨</p>
+        </div>
+    </div>
+
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-logo" id="homeBtn">🍜 美食地图</a>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="#" class="nav-link active" data-page="home">首页</a></li>
+                <li class="nav-item"><a href="#" class="nav-link" data-page="recommend">趣味推荐</a></li>
+                <li class="nav-item"><a href="#" class="nav-link" data-page="community">美食社区</a></li>
+                <li class="nav-item"><a href="#" class="nav-link" data-page="map">地图探索</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <!-- 首页内容 -->
+        <div class="page-content active" id="homePage">
+            <div class="container">
+                <!-- 头部 -->
+                <header class="header">
+                    <h1>🍜 大学城美食地图 🍕</h1>
+                    <p class="subtitle">✨ 为学生打造的本地美食指南 ✨</p>
+                </header>
+
+                <!-- 快速操作栏 -->
+                <div class="quick-actions">
+                    <button class="btn-primary" id="randomBtn">🎲 随机推荐</button>
+                    <button class="btn-secondary" id="filterBtn">🔍 筛选美食</button>
+                    <button class="btn-primary" data-page="recommend">🎯 趣味推荐</button>
+                    <button class="btn-primary" data-page="community">💬 美食社区</button>
+                </div>
+
+                <!-- 统计信息 -->
+                <div class="stats-section">
+                    <div class="stat-card">
+                        <div class="stat-number">8</div>
+                        <div class="stat-label">精选餐厅</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">4</div>
+                        <div class="stat-label">合作高校</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">6</div>
+                        <div class="stat-label">美食类型</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">4.6</div>
+                        <div class="stat-label">平均评分</div>
+                    </div>
+                </div>
+
+                <!-- 筛选面板 -->
+                <div class="filter-panel" id="filterPanel">
+                    <div class="filter-group">
+                        <label>校区：</label>
+                        <select id="campusFilter">
+                            <option value="all">全部</option>
+                            <option value="campus1">清华大学</option>
+                            <option value="campus2">北京大学</option>
+                            <option value="campus3">人民大学</option>
+                            <option value="campus4">北京师范大学</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>菜系：</label>
+                        <select id="cuisineFilter">
+                            <option value="all">全部</option>
+                            <option value="chinese">中餐</option>
+                            <option value="western">西餐</option>
+                            <option value="japanese">日料</option>
+                            <option value="korean">韩餐</option>
+                            <option value="hotpot">火锅</option>
+                            <option value="snack">小吃</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>人均：</label>
+                        <select id="priceFilter">
+                            <option value="all">全部</option>
+                            <option value="low">￥20以下</option>
+                            <option value="medium">￥20-50</option>
+                            <option value="high">￥50以上</option>
+                        </select>
+                    </div>
+                    <button class="btn-apply" id="applyFilter">应用筛选</button>
+                </div>
+
+                <!-- 地图区域 -->
+                <div class="map-container">
+                    <div id="map" class="map">
+                        <div class="map-placeholder">
+                            <h3>🗺️ 大学城美食地图</h3>
+                            <p>点击餐厅标记查看详情</p>
+                            <div class="map-universities">
+                                <div class="university-marker" style="left: 20%; top: 30%;">
+                                    <span class="university-icon">🏫</span>
+                                    <span class="university-name">清华大学</span>
+                                </div>
+                                <div class="university-marker" style="left: 40%; top: 50%;">
+                                    <span class="university-icon">🏫</span>
+                                    <span class="university-name">北京大学</span>
+                                </div>
+                                <div class="university-marker" style="left: 60%; top: 35%;">
+                                    <span class="university-icon">🏫</span>
+                                    <span class="university-name">人民大学</span>
+                                </div>
+                                <div class="university-marker" style="left: 75%; top: 55%;">
+                                    <span class="university-icon">🏫</span>
+                                    <span class="university-name">北京师范大学</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 餐厅列表 -->
+                <div class="restaurant-list" id="restaurantList">
+                    <!-- 动态生成 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 趣味推荐页面 -->
+        <div class="page-content" id="recommendPage">
+            <div class="container">
+                <header class="page-header">
+                    <h1>🎯 趣味推荐</h1>
+                    <p>多种有趣的方式帮你选择美食</p>
+                </header>
+                
+                <div class="recommend-tabs">
+                    <button class="tab-btn active" data-tab="wheel">🎰 转盘推荐</button>
+                    <button class="tab-btn" data-tab="mystery">🎁 盲盒惊喜</button>
+                    <button class="tab-btn" data-tab="mbti">🧠 MBTI推荐</button>
+                    <button class="tab-btn" data-tab="zodiac">⭐ 星座推荐</button>
+                    <button class="tab-btn" data-tab="calendar">📅 黄历推荐</button>
+                </div>
+
+                <div class="tab-content" id="wheelTab">
+                    <div id="spinWheel">转盘功能加载中...</div>
+                </div>
+
+                <div class="tab-content" id="mysteryTab" style="display: none;">
+                    <div id="mysteryBox">盲盒功能加载中...</div>
+                </div>
+
+                <div class="tab-content" id="mbtiTab" style="display: none;">
+                    <div id="mbtiRecommend">MBTI推荐加载中...</div>
+                </div>
+
+                <div class="tab-content" id="zodiacTab" style="display: none;">
+                    <div id="zodiacRecommend">星座推荐加载中...</div>
+                </div>
+
+                <div class="tab-content" id="calendarTab" style="display: none;">
+                    <div id="calendarRecommend">黄历推荐加载中...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 美食社区页面 -->
+        <div class="page-content" id="communityPage">
+            <div class="container">
+                <header class="page-header">
+                    <h1>💬 美食社区</h1>
+                    <p>和同学们分享美食体验</p>
+                </header>
+                
+                <div class="community-filters">
+                    <select id="communityUniversity">
+                        <option value="all">全部大学</option>
+                        <option value="tsinghua">清华大学</option>
+                        <option value="pku">北京大学</option>
+                        <option value="ruc">人民大学</option>
+                        <option value="bnu">北京师范大学</option>
+                    </select>
+                    
+                    <select id="communityCategory">
+                        <option value="all">全部分类</option>
+                        <option value="restaurant">餐厅推荐</option>
+                        <option value="cuisine">美食类型</option>
+                        <option value="mbti">MBTI美食</option>
+                        <option value="zodiac">星座美食</option>
+                    </select>
+                    
+                    <button class="btn-primary" id="newPostBtn">📝 发布动态</button>
+                </div>
+
+                <div class="community-content" id="communityContent">
+                    社区功能加载中...
+                </div>
+            </div>
+        </div>
+
+        <!-- 地图探索页面 -->
+        <div class="page-content" id="mapPage">
+            <div class="container">
+                <header class="page-header">
+                    <h1>🗺️ 地图探索</h1>
+                    <p>在地图上发现周边美食</p>
+                </header>
+                
+                <div class="map-container full-map">
+                    <div id="fullMap" class="full-map-view">
+                        <div class="map-placeholder">
+                            <h3>🗺️ 交互式美食地图</h3>
+                            <p>显示大学城周边所有餐厅位置</p>
+                            
+                            <!-- 大学标记 -->
+                            <div class="university-marker" style="left: 20%; top: 30%;">
+                                <span class="university-icon">🏫</span>
+                                <span class="university-name">清华大学</span>
+                            </div>
+                            <div class="university-marker" style="left: 40%; top: 50%;">
+                                <span class="university-icon">🏫</span>
+                                <span class="university-name">北京大学</span>
+                            </div>
+                            <div class="university-marker" style="left: 60%; top: 35%;">
+                                <span class="university-icon">🏫</span>
+                                <span class="university-name">人民大学</span>
+                            </div>
+                            <div class="university-marker" style="left: 75%; top: 55%;">
+                                <span class="university-icon">🏫</span>
+                                <span class="university-name">北京师范大学</span>
+                            </div>
+                            
+                            <div class="map-legend">
+                                <div class="legend-item"><span class="marker chinese"></span>中餐</div>
+                                <div class="legend-item"><span class="marker western"></span>西餐</div>
+                                <div class="legend-item"><span class="marker japanese"></span>日料</div>
+                                <div class="legend-item"><span class="marker korean"></span>韩餐</div>
+                                <div class="legend-item"><span class="marker hotpot"></span>火锅</div>
+                                <div class="legend-item"><span class="marker snack"></span>小吃</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 浮动操作按钮 -->
+    <div class="floating-action-btn" id="floatingBtn" title="快速推荐">
+        <span class="fab-icon">🎯</span>
+    </div>
+
+    <!-- 餐厅详情弹窗 -->
+    <div class="modal" id="detailModal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- 发布动态弹窗 -->
+    <div class="modal" id="postModal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="post-form">
+                <h3>📝 发布美食动态</h3>
+                <form id="newPostForm">
+                    <input type="text" id="postTitle" placeholder="标题" required>
+                    <textarea id="postContent" placeholder="分享你的美食体验..." required></textarea>
+                    <select id="postCategory">
+                        <option value="restaurant">餐厅推荐</option>
+                        <option value="cuisine">美食类型</option>
+                        <option value="mbti">MBTI美食</option>
+                        <option value="zodiac">星座美食</option>
+                    </select>
+                    <select id="postUniversity">
+                        <option value="tsinghua">清华大学</option>
+                        <option value="pku">北京大学</option>
+                        <option value="ruc">人民大学</option>
+                        <option value="bnu">北京师范大学</option>
+                    </select>
+                    <button type="submit" class="btn-primary">发布</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 调试信息 -->
+    <div id="debug-info" style="position: fixed; top: 10px; right: 10px; background: rgba(0,0,0,0.8); color: white; padding: 10px; border-radius: 5px; font-size: 12px; max-width: 300px; z-index: 10000;">
+        <div>加载状态: <span id="load-status">初始化中...</span></div>
+        <div>错误信息: <span id="error-info">无</span></div>
+    </div>
+
+    <script>
+        // 调试信息更新
+        function updateDebugInfo(status, error = null) {
+            document.getElementById('load-status').textContent = status;
+            if (error) {
+                document.getElementById('error-info').textContent = error;
+                console.error('错误:', error);
+            }
+        }
+
+        updateDebugInfo('开始加载脚本...');
+
+        // 逐步加载脚本
+        function loadScript(src, callback) {
+            const script = document.createElement('script');
+            script.src = src + '?v=4';
+            script.onload = function() {
+                console.log('✅ 加载成功:', src);
+                if (callback) callback(null);
+            };
+            script.onerror = function() {
+                const error = '❌ 加载失败: ' + src;
+                console.error(error);
+                updateDebugInfo('脚本加载失败', src);
+                if (callback) callback(error);
+            };
+            document.head.appendChild(script);
+        }
+
+        // 脚本加载队列
+        const scripts = [
+            'dataLayer.js',
+            'anonymousSystem.js', 
+            'recommendationEngine.js',
+            'spinWheel.js',
+            'mysteryBox.js',
+            'mbtiRecommend.js',
+            'zodiacRecommend.js',
+            'calendarRecommend.js',
+            'communityForum.js'
+        ];
+
+        let loadedScripts = 0;
+        let hasError = false;
+
+        function loadNextScript() {
+            if (hasError || loadedScripts >= scripts.length) {
+                if (!hasError) {
+                    updateDebugInfo('所有脚本加载完成，开始初始化...');
+                    initializeApp();
+                }
+                return;
+            }
+
+            const scriptName = scripts[loadedScripts];
+            updateDebugInfo(`加载脚本 ${loadedScripts + 1}/${scripts.length}: ${scriptName}`);
+            
+            loadScript(scriptName, function(error) {
+                if (error) {
+                    hasError = true;
+                    updateDebugInfo('脚本加载中断', error);
+                    // 即使有错误也尝试基本初始化
+                    initializeBasicApp();
+                } else {
+                    loadedScripts++;
+                    setTimeout(loadNextScript, 100); // 小延迟确保脚本完全加载
+                }
+            });
+        }
+
+        // 基本应用初始化（出错时的备用方案）
+        function initializeBasicApp() {
+            updateDebugInfo('使用基本模式初始化...');
+            
+            // 包含基本的餐厅数据和功能
+            window.restaurants = [
+                {
+                    id: 1,
+                    name: "老北京炸酱面馆",
+                    cuisine: "chinese",
+                    campus: "campus1",
+                    price: "low",
+                    avgPrice: 18,
+                    rating: 4.5,
+                    distance: "200m",
+                    specialty: ["炸酱面", "卤煮", "豆汁"],
+                    address: "清华东路15号",
+                    position: { left: "15%", top: "20%" }
+                },
+                {
+                    id: 2,
+                    name: "韩式炸鸡店",
+                    cuisine: "korean",
+                    campus: "campus2",
+                    price: "medium",
+                    avgPrice: 35,
+                    rating: 4.7,
+                    distance: "500m",
+                    specialty: ["炸鸡", "芝士球", "辣炒年糕"],
+                    address: "北大南门商业街",
+                    position: { left: "35%", top: "40%" }
+                }
+            ];
+
+            setupBasicNavigation();
+            renderBasicRestaurants();
+            updateDebugInfo('基本模式初始化完成');
+        }
+
+        // 完整应用初始化
+        function initializeApp() {
+            try {
+                updateDebugInfo('开始完整初始化...');
+                
+                // 加载主脚本
+                loadScript('script.js', function(error) {
+                    if (error) {
+                        updateDebugInfo('主脚本加载失败，使用基本模式', error);
+                        initializeBasicApp();
+                    } else {
+                        updateDebugInfo('应用初始化完成 ✅');
+                        // 隐藏调试信息
+                        setTimeout(() => {
+                            document.getElementById('debug-info').style.display = 'none';
+                        }, 3000);
+                    }
+                });
+            } catch (error) {
+                updateDebugInfo('初始化失败', error.message);
+                initializeBasicApp();
+            }
+        }
+
+        // 基本导航功能
+        function setupBasicNavigation() {
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const page = e.target.dataset.page;
+                    if (page) {
+                        switchPageBasic(page);
+                    }
+                });
+            });
+
+            document.querySelectorAll('[data-page]').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const page = e.target.dataset.page;
+                    if (page) {
+                        switchPageBasic(page);
+                    }
+                });
+            });
+
+            // 浮动按钮
+            const floatingBtn = document.getElementById('floatingBtn');
+            if (floatingBtn) {
+                floatingBtn.addEventListener('click', () => switchPageBasic('recommend'));
+            }
+        }
+
+        function switchPageBasic(pageName) {
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            const targetPage = document.getElementById(pageName + 'Page');
+            if (targetPage) {
+                targetPage.classList.add('active');
+                
+                const navLink = document.querySelector(`[data-page="${pageName}"]`);
+                if (navLink && navLink.classList.contains('nav-link')) {
+                    navLink.classList.add('active');
+                }
+            }
+        }
+
+        function renderBasicRestaurants() {
+            const restaurantList = document.getElementById('restaurantList');
+            if (!restaurantList || !window.restaurants) return;
+
+            restaurantList.innerHTML = window.restaurants.map(restaurant => `
+                <div class="restaurant-card">
+                    <h3>${restaurant.name}</h3>
+                    <div class="restaurant-tags">
+                        <span class="tag cuisine">${restaurant.cuisine === 'chinese' ? '中餐' : '韩餐'}</span>
+                        <span class="tag price">人均¥${restaurant.avgPrice}</span>
+                    </div>
+                    <div class="restaurant-info">
+                        <div class="rating">⭐ ${restaurant.rating} 分</div>
+                        <div class="distance">📍 距离 ${restaurant.distance}</div>
+                        <div>🍽️ 特色：${restaurant.specialty.slice(0, 2).join('、')}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 开始加载
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDebugInfo('DOM加载完成，开始加载脚本...');
+            loadNextScript();
+        });
+
+        // 全局错误处理
+        window.addEventListener('error', function(e) {
+            updateDebugInfo('JavaScript错误', e.message);
+        });
+    </script>
+</body>
+</html>

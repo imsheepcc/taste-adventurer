@@ -247,9 +247,6 @@
             initializeMBTIGrid();
             initializeZodiacGrid();
             initializeCalendarRecommend();
-            
-            // 设置MBTI为默认激活标签
-            switchRecommendTab('mbti');
         }
 
         // 切换推荐标签
@@ -261,8 +258,6 @@
                 btn.classList.remove('active');
                 btn.style.background = 'rgba(255, 255, 255, 0.2)';
                 btn.style.color = 'white';
-                btn.style.transform = 'scale(1)';
-                btn.style.boxShadow = '0 5px 15px rgba(255, 255, 255, 0.2)';
             });
             
             const activeBtn = document.querySelector(`[onclick="switchRecommendTab('${tabName}')"]`);
@@ -270,8 +265,6 @@
                 activeBtn.classList.add('active');
                 activeBtn.style.background = 'var(--primary-color)';
                 activeBtn.style.color = 'var(--text-color)';
-                activeBtn.style.transform = 'scale(1.05)';
-                activeBtn.style.boxShadow = '0 8px 25px rgba(255, 209, 0, 0.4)';
             }
             
             // 切换内容
@@ -286,53 +279,47 @@
             }
         }
         // 转盘功能
-        let currentWheelRestaurants = []; // 当前转盘上的餐厅
-        
         function initializeSpinWheel() {
-            refreshWheelOptions();
-        }
-
-        function refreshWheelOptions() {
-            // 随机选择8家餐厅
-            const shuffled = [...restaurants].sort(() => 0.5 - Math.random());
-            currentWheelRestaurants = shuffled.slice(0, 8);
-            
             const wheel = document.getElementById('wheel');
             if (!wheel) return;
             
             const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#FFB6C1', '#98FB98'];
+            const selectedRestaurants = restaurants.slice(0, 8);
             
-            // 创建经典圆形转盘，使用SVG绘制扇形
-            const svgContent = `
-                <svg width="100%" height="100%" viewBox="0 0 300 300" style="transform: rotate(-22.5deg);">
-                    ${Array.from({length: 8}, (_, index) => {
-                        const startAngle = (360 / 8) * index;
-                        const endAngle = (360 / 8) * (index + 1);
-                        const startRad = (startAngle * Math.PI) / 180;
-                        const endRad = (endAngle * Math.PI) / 180;
-                        
-                        const x1 = 150 + 140 * Math.cos(startRad);
-                        const y1 = 150 + 140 * Math.sin(startRad);
-                        const x2 = 150 + 140 * Math.cos(endRad);
-                        const y2 = 150 + 140 * Math.sin(endRad);
-                        
-                        const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
-                        
-                        return `
-                            <path d="M 150 150 L ${x1} ${y1} A 140 140 0 ${largeArcFlag} 1 ${x2} ${y2} Z" 
-                                  fill="${colors[index % colors.length]}" 
-                                  stroke="white" 
-                                  stroke-width="3"/>
-                        `;
-                    }).join('')}
-                </svg>
-            `;
-            
-            wheel.innerHTML = svgContent;
-            
-            // 重置转盘角度
-            wheel.style.transform = 'rotate(0deg)';
-            console.log('转盘选项已刷新，新的餐厅列表:', currentWheelRestaurants.map(r => r.name));
+            // 创建转盘扇形区域
+            wheel.innerHTML = '<div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); font-size: 30px; z-index: 10; color: #FF6B9D;">🔽</div>' + 
+                selectedRestaurants.map((restaurant, index) => {
+                    const angle = (360 / selectedRestaurants.length) * index;
+                    const nextAngle = (360 / selectedRestaurants.length) * (index + 1);
+                    return `
+                        <div class="wheel-section" style="
+                            position: absolute;
+                            width: 50%;
+                            height: 50%;
+                            top: 50%;
+                            left: 50%;
+                            transform-origin: 0 0;
+                            transform: rotate(${angle}deg);
+                            background: ${colors[index % colors.length]};
+                            clip-path: polygon(0 0, 100% 0, ${Math.cos((nextAngle - angle) * Math.PI / 180) * 100}% ${Math.sin((nextAngle - angle) * Math.PI / 180) * 100}%);
+                            border: 2px solid white;
+                        ">
+                            <div style="
+                                position: absolute;
+                                color: white;
+                                font-weight: bold;
+                                font-size: 11px;
+                                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+                                white-space: nowrap;
+                                pointer-events: none;
+                                transform: rotate(${(nextAngle - angle) / 2}deg);
+                                left: 60%;
+                                top: 15%;
+                                transform-origin: 0 0;
+                            ">${restaurant.name.length > 6 ? restaurant.name.substring(0, 6) + '...' : restaurant.name}</div>
+                        </div>
+                    `;
+                }).join('');
         }
 
         function spinWheel() {
@@ -340,80 +327,33 @@
             
             wheelSpinning = true;
             const wheel = document.getElementById('wheel');
+            const resultDiv = document.getElementById('wheelResult');
             
-            // 计算旋转角度：多转几圈 + 最终停止角度
             const spins = Math.floor(Math.random() * 5) + 5; // 5-10圈
-            const finalAngle = Math.floor(Math.random() * 360); // 最终停止角度
+            const finalAngle = Math.floor(Math.random() * 360);
             const totalRotation = spins * 360 + finalAngle;
             
-            console.log('转盘开始旋转，总旋转角度:', totalRotation, '最终角度:', finalAngle);
-            
-            // 只旋转转盘，指针保持固定
             wheel.style.transform = `rotate(${totalRotation}deg)`;
             wheel.style.transition = 'transform 3s cubic-bezier(0.23, 1, 0.32, 1)';
             
             setTimeout(() => {
-                // 根据最终角度计算指针指向的扇形区域
-                // 指针在顶部（12点方向），SVG已经预先旋转了-22.5度来对齐
-                const normalizedAngle = (360 - (finalAngle % 360) + 22.5) % 360; // 调整SVG偏移
-                const sectionAngle = 360 / 8; // 每个扇形45度
-                const selectedIndex = Math.floor(normalizedAngle / sectionAngle) % 8;
+                const selectedIndex = Math.floor((360 - finalAngle) / (360 / 8)) % 8;
+                const selectedRestaurant = restaurants[selectedIndex];
                 
-                const selectedRestaurant = currentWheelRestaurants[selectedIndex];
-                
-                console.log('转盘停止，指针角度:', normalizedAngle, '选中区域:', selectedIndex, '餐厅:', selectedRestaurant.name);
-                
-                // 显示弹窗结果
-                showWheelResultModal(selectedRestaurant);
+                resultDiv.innerHTML = `
+                    <div style="background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); max-width: 400px; margin: 0 auto;">
+                        <h3 style="color: var(--primary-color); margin-bottom: 10px; font-size: 1.2em;">🎉 推荐结果</h3>
+                        <h2 style="color: var(--text-color); margin-bottom: 15px; font-size: 2em;">${selectedRestaurant.name}</h2>
+                        <p style="color: #666; margin: 10px 0; font-size: 1.1em;">⭐ ${selectedRestaurant.rating} 分</p>
+                        <p style="color: #666; margin: 10px 0; font-size: 1.1em;">💰 人均¥${selectedRestaurant.avgPrice}</p>
+                        <p style="color: #666; margin: 10px 0; font-size: 1.1em;">🍽️ ${selectedRestaurant.specialty[0]}</p>
+                        <button onclick="showRestaurantDetail(${selectedRestaurant.id})" style="margin-top: 20px; padding: 12px 30px; background: var(--primary-color); color: white; border: none; border-radius: 25px; cursor: pointer; font-size: 1em; font-weight: 600; transition: all 0.3s;">查看详情</button>
+                    </div>
+                `;
                 
                 wheelSpinning = false;
                 wheel.style.transition = '';
             }, 3000);
-        }
-
-        function showWheelResultModal(restaurant) {
-            const modalBody = document.getElementById('modalBody');
-            modalBody.innerHTML = `
-                <div style="text-align: center; padding: 20px;">
-                    <div style="font-size: 4em; margin-bottom: 20px; animation: bounce 1s ease-in-out;">🎉</div>
-                    <h2 style="color: var(--primary-color); margin-bottom: 15px; font-size: 2.2em;">转盘结果</h2>
-                    <div style="background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%); border-radius: 20px; padding: 25px; margin: 20px 0; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
-                        <h3 style="color: #333; margin-bottom: 15px; font-size: 1.8em;">${restaurant.name}</h3>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin: 15px 0;">
-                            <div style="text-align: center;">
-                                <div style="color: #FFA726; font-size: 1.3em; font-weight: 600;">⭐ ${restaurant.rating} 分</div>
-                                <div style="color: #666; font-size: 0.9em;">评分</div>
-                            </div>
-                            <div style="text-align: center;">
-                                <div style="color: #4CAF50; font-size: 1.3em; font-weight: 600;">¥${restaurant.avgPrice}</div>
-                                <div style="color: #666; font-size: 0.9em;">人均消费</div>
-                            </div>
-                            <div style="text-align: center;">
-                                <div style="color: #2196F3; font-size: 1.3em; font-weight: 600;">${restaurant.distance}</div>
-                                <div style="color: #666; font-size: 0.9em;">距离</div>
-                            </div>
-                        </div>
-                        <div style="margin: 15px 0;">
-                            <h4 style="color: #333; margin-bottom: 8px;">🍽️ 特色菜品</h4>
-                            <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
-                                ${restaurant.specialty.slice(0, 3).map(item => 
-                                    `<span style="background: var(--primary-color); color: white; padding: 5px 12px; border-radius: 15px; font-size: 0.9em; font-weight: 600;">${item}</span>`
-                                ).join('')}
-                            </div>
-                        </div>
-                        <div style="margin: 15px 0;">
-                            <h4 style="color: #333; margin-bottom: 8px;">📍 地址</h4>
-                            <p style="color: #666; margin: 0;">${restaurant.address}</p>
-                        </div>
-                    </div>
-                    <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-                        <button onclick="showRestaurantDetail(${restaurant.id}); closeModal('detailModal');" style="padding: 12px 25px; background: var(--primary-color); color: white; border: none; border-radius: 25px; cursor: pointer; font-weight: 600; font-size: 1.1em; transition: all 0.3s;">查看详情</button>
-                        <button onclick="spinWheel(); closeModal('detailModal');" style="padding: 12px 25px; background: linear-gradient(135deg, #FF6B9D 0%, #FFA07A 100%); color: white; border: none; border-radius: 25px; cursor: pointer; font-weight: 600; font-size: 1.1em; transition: all 0.3s;">再转一次</button>
-                    </div>
-                </div>
-            `;
-            
-            document.getElementById('detailModal').style.display = 'flex';
         }
 
         // 盲盒功能
@@ -659,9 +599,6 @@
                 '土': ['chinese', 'snack']
             };
             
-            // 根据五行和当前时间推荐最佳用餐时间
-            const bestMealTimes = getBestMealTimes(wuxing, today);
-            
             todayInfo.innerHTML = `
                 <h3 style="color: var(--primary-color); margin-bottom: 15px;">📅 ${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日</h3>
                 <div style="margin: 15px 0;">
@@ -669,16 +606,7 @@
                     <p style="color: #666; margin: 0;">根据五行理论，今日适宜食用相应属性的美食</p>
                 </div>
                 <div style="margin: 15px 0;">
-                    <h4 style="color: #333; margin-bottom: 8px;">🕐 今日最佳用餐时间：</h4>
-                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                        ${bestMealTimes.map(time => 
-                            `<span style="background: ${time.isNow ? 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)' : 'linear-gradient(135deg, #e0e0e0 0%, #bdbdbd 100%)'}; 
-                             color: ${time.isNow ? 'white' : '#666'}; 
-                             padding: 6px 12px; border-radius: 15px; font-size: 0.9em; font-weight: 600;">
-                             ${time.period} ${time.time} ${time.isNow ? '(当前最佳)' : ''}</span>`
-                        ).join('')}
-                    </div>
-                    <p style="color: #666; font-size: 0.9em; margin-top: 8px;">💡 ${getCurrentMealAdvice(today, wuxing)}</p>
+                    <h4 style="color: #333; margin-bottom: 5px;">🕐 最佳用餐时间：中午11-13点（午时）</h4>
                 </div>
             `;
             
@@ -700,281 +628,6 @@
                     `).join('')}
                 </div>
             `;
-        }
-
-        // 获取最佳用餐时间
-        function getBestMealTimes(wuxing, currentDate) {
-            const currentHour = currentDate.getHours();
-            
-            // 根据五行理论和传统时辰确定最佳用餐时间，包含早中晚三餐
-            const mealTimes = {
-                '金': [
-                    { period: '早餐', time: '7:00-9:00', hours: [7, 8, 9], reason: '辰时养胃' },
-                    { period: '午餐', time: '11:00-13:00', hours: [11, 12, 13], reason: '午时养心' },
-                    { period: '晚餐', time: '17:00-19:00', hours: [17, 18, 19], reason: '酉时养肾' }
-                ],
-                '木': [
-                    { period: '早餐', time: '6:00-8:00', hours: [6, 7, 8], reason: '卯时养肝' },
-                    { period: '午餐', time: '11:00-13:00', hours: [11, 12, 13], reason: '午时补气' },
-                    { period: '晚餐', time: '18:00-20:00', hours: [18, 19, 20], reason: '戌时安神' }
-                ],
-                '水': [
-                    { period: '早餐', time: '7:00-9:00', hours: [7, 8, 9], reason: '辰时润燥' },
-                    { period: '午餐', time: '12:00-14:00', hours: [12, 13, 14], reason: '未时养脾' },
-                    { period: '晚餐', time: '18:00-20:00', hours: [18, 19, 20], reason: '戌时滋阴' }
-                ],
-                '火': [
-                    { period: '早餐', time: '8:00-10:00', hours: [8, 9, 10], reason: '巳时温阳' },
-                    { period: '午餐', time: '11:00-13:00', hours: [11, 12, 13], reason: '午时旺火' },
-                    { period: '晚餐', time: '17:00-19:00', hours: [17, 18, 19], reason: '酉时平衡' }
-                ],
-                '土': [
-                    { period: '早餐', time: '7:00-9:00', hours: [7, 8, 9], reason: '辰时健脾' },
-                    { period: '午餐', time: '11:00-13:00', hours: [11, 12, 13], reason: '午时养胃' },
-                    { period: '晚餐', time: '18:00-20:00', hours: [18, 19, 20], reason: '戌时安土' }
-                ]
-            };
-            
-            const todayMealTimes = mealTimes[wuxing] || mealTimes['土'];
-            
-            // 标记当前最佳用餐时间
-            return todayMealTimes.map(meal => ({
-                ...meal,
-                isNow: meal.hours.includes(currentHour)
-            }));
-        }
-
-        // 获取当前用餐建议
-        function getCurrentMealAdvice(currentDate, wuxing) {
-            const currentHour = currentDate.getHours();
-            
-            const adviceMap = {
-                '金': {
-                    morning: '早晨适宜清淡食物，有助于肺部清洁',
-                    noon: '午时是金气最旺的时候，适合进食滋润食物',
-                    evening: '傍晚宜食辛味食物，有助于金气收敛',
-                    night: '夜晚不宜过食，以免影响肺部休息'
-                },
-                '木': {
-                    morning: '清晨是肝气升发的时候，适合酸甜食物',
-                    noon: '午时适合绿色蔬菜，有助于肝气舒展',
-                    evening: '傍晚宜食温和食物，平衡肝火',
-                    night: '夜晚宜清淡，让肝脏得到休息'
-                },
-                '水': {
-                    morning: '早晨适合温润食物，补充夜间消耗',
-                    noon: '午时可适当进食咸味，补充肾气',
-                    evening: '傍晚宜滋阴食物，为夜间修复做准备',
-                    night: '夜晚是肾气收藏的时候，适合清淡滋补'
-                },
-                '火': {
-                    morning: '早晨心火初升，适合温热食物',
-                    noon: '午时心火最旺，可适当进食苦味清心',
-                    evening: '傍晚宜平和食物，避免心火过旺',
-                    night: '夜晚心神需要安宁，宜清淡食物'
-                },
-                '土': {
-                    morning: '早晨脾胃苏醒，适合温和易消化食物',
-                    noon: '午时脾胃功能最强，可适当进食甘味',
-                    evening: '傍晚脾胃渐弱，宜清淡易消化',
-                    night: '夜晚脾胃需要休息，不宜过食'
-                }
-            };
-            
-            const advice = adviceMap[wuxing] || adviceMap['土'];
-            
-            if (currentHour >= 5 && currentHour < 11) {
-                return advice.morning;
-            } else if (currentHour >= 11 && currentHour < 15) {
-                return advice.noon;
-            } else if (currentHour >= 15 && currentHour < 21) {
-                return advice.evening;
-            } else {
-                return advice.night;
-            }
-        }
-
-        // 八字美食推荐功能
-        function calculateBaziRecommendation() {
-            const year = document.getElementById('birthYear').value;
-            const month = document.getElementById('birthMonth').value;
-            const day = document.getElementById('birthDay').value;
-            const hour = document.getElementById('birthHour').value;
-            
-            if (!year || !month || !day || !hour) {
-                alert('请填写完整的生辰信息！');
-                return;
-            }
-            
-            // 计算八字五行
-            const baziResult = calculateBazi(parseInt(year), parseInt(month), parseInt(day), hour);
-            
-            // 根据八字推荐美食
-            const recommendedRestaurants = restaurants.filter(restaurant => 
-                baziResult.suitableCuisines.includes(restaurant.cuisine)
-            ).slice(0, 4);
-            
-            // 显示结果
-            const resultDiv = document.getElementById('calendarRestaurants');
-            resultDiv.innerHTML = `
-                <div style="background: #e8f5e8; border-radius: 15px; padding: 20px; margin: 20px 0; text-align: left;">
-                    <h3 style="color: #2e7d32; margin-bottom: 15px;">🔮 你的八字分析</h3>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px;">
-                        <div><strong>年柱：</strong>${baziResult.year}</div>
-                        <div><strong>月柱：</strong>${baziResult.month}</div>
-                        <div><strong>日柱：</strong>${baziResult.day}</div>
-                        <div><strong>时柱：</strong>${baziResult.hour}</div>
-                    </div>
-                    <div style="margin: 15px 0;">
-                        <h4 style="color: #1b5e20; margin-bottom: 8px;">⚡ 你的五行属性：${baziResult.mainElement}</h4>
-                        <p style="color: #2e7d32; margin: 0; line-height: 1.5;">${baziResult.description}</p>
-                    </div>
-                    <div style="margin: 15px 0;">
-                        <h4 style="color: #1b5e20; margin-bottom: 8px;">🍽️ 适宜美食类型：${baziResult.foodTypes.join('、')}</h4>
-                    </div>
-                </div>
-                
-                <h4>🌟 为你推荐的餐厅：</h4>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
-                    ${recommendedRestaurants.map(restaurant => `
-                        <div onclick="showRestaurantDetail(${restaurant.id})" style="background: white; border-radius: 10px; padding: 15px; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.1); text-align: center; transition: all 0.3s;">
-                            <h5 style="color: #333; margin-bottom: 8px; font-size: 1.1em;">${restaurant.name}</h5>
-                            <div style="color: #FFA726; font-weight: 600; margin: 5px 0;">⭐ ${restaurant.rating}</div>
-                            <div style="color: #4CAF50; font-weight: 600; margin: 5px 0;">¥${restaurant.avgPrice}</div>
-                            <div style="color: #666; font-size: 0.9em;">${restaurant.specialty[0]}</div>
-                            <div style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); color: white; padding: 3px 8px; border-radius: 10px; font-size: 0.8em; font-weight: 600; margin-top: 5px;">八字匹配</div>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-            
-            // 滚动到结果区域
-            resultDiv.scrollIntoView({ behavior: 'smooth' });
-        }
-
-        // 动态更新日期选项
-        function updateDayOptions() {
-            const yearSelect = document.getElementById('birthYear');
-            const monthSelect = document.getElementById('birthMonth');
-            const daySelect = document.getElementById('birthDay');
-            
-            if (!yearSelect || !monthSelect || !daySelect) return;
-            
-            const year = parseInt(yearSelect.value);
-            const month = parseInt(monthSelect.value);
-            
-            if (!year || !month) {
-                // 如果年份或月份未选择，显示默认的日期选项
-                daySelect.innerHTML = `
-                    <option value="">请选择日期</option>
-                    ${Array.from({length: 31}, (_, i) => `<option value="${i + 1}">${i + 1}日</option>`).join('')}
-                `;
-                return;
-            }
-            
-            // 计算该月的天数
-            const daysInMonth = getDaysInMonth(year, month);
-            
-            // 保存当前选择的日期
-            const currentDay = parseInt(daySelect.value);
-            
-            // 清空并重新生成日期选项
-            daySelect.innerHTML = '<option value="">请选择日期</option>';
-            
-            for (let day = 1; day <= daysInMonth; day++) {
-                const option = document.createElement('option');
-                option.value = day;
-                option.textContent = `${day}日`;
-                
-                // 如果之前选择的日期仍然有效，保持选中状态
-                if (currentDay === day && currentDay <= daysInMonth) {
-                    option.selected = true;
-                }
-                
-                daySelect.appendChild(option);
-            }
-            
-            // 如果当前选择的日期超出了该月的天数，清除选择
-            if (currentDay > daysInMonth) {
-                daySelect.value = '';
-            }
-        }
-
-        // 获取指定年月的天数
-        function getDaysInMonth(year, month) {
-            // 使用Date对象计算该月的天数
-            return new Date(year, month, 0).getDate();
-        }
-
-        // 八字计算函数
-        function calculateBazi(year, month, day, hour) {
-            // 天干地支数组
-            const tianGan = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
-            const diZhi = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
-            
-            // 五行对应
-            const wuxingMap = {
-                '甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土', 
-                '己': '土', '庚': '金', '辛': '金', '壬': '水', '癸': '水',
-                '子': '水', '丑': '土', '寅': '木', '卯': '木', '辰': '土', 
-                '巳': '火', '午': '火', '未': '土', '申': '金', '酉': '金', '戌': '土', '亥': '水'
-            };
-            
-            // 时辰对应
-            const hourMap = {
-                'zi': '子', 'chou': '丑', 'yin': '寅', 'mao': '卯',
-                'chen': '辰', 'si': '巳', 'wu': '午', 'wei': '未',
-                'shen': '申', 'you': '酉', 'xu': '戌', 'hai': '亥'
-            };
-            
-            // 简化的八字计算（实际八字计算非常复杂，这里做简化处理）
-            const yearTianGan = tianGan[(year - 4) % 10];
-            const yearDiZhi = diZhi[(year - 4) % 12];
-            const monthTianGan = tianGan[(month - 1) % 10];
-            const monthDiZhi = diZhi[(month - 1) % 12];
-            const dayTianGan = tianGan[(day - 1) % 10];
-            const dayDiZhi = diZhi[(day - 1) % 12];
-            const hourDiZhi = hourMap[hour];
-            const hourTianGan = tianGan[Math.floor(Math.random() * 10)]; // 简化处理
-            
-            // 主要五行（以日干为主）
-            const mainElement = wuxingMap[dayTianGan];
-            
-            // 根据五行推荐美食类型
-            const elementCuisines = {
-                '金': ['western', 'japanese'],
-                '木': ['chinese', 'japanese'],
-                '水': ['chinese', 'japanese'],
-                '火': ['korean', 'hotpot'],
-                '土': ['chinese', 'snack']
-            };
-            
-            const elementFoodTypes = {
-                '金': ['清淡食物', '白色食物', '辛味食物'],
-                '木': ['绿色蔬菜', '酸味食物', '养肝食物'],
-                '水': ['黑色食物', '咸味食物', '滋阴食物'],
-                '火': ['红色食物', '苦味食物', '温热食物'],
-                '土': ['黄色食物', '甘味食物', '健脾食物']
-            };
-            
-            const elementDescriptions = {
-                '金': '你的五行属金，性格坚毅果断，适合食用清淡、辛味的食物来调和体质',
-                '木': '你的五行属木，性格温和包容，适合食用绿色蔬菜和酸味食物来养肝护体',
-                '水': '你的五行属水，性格聪慧灵活，适合食用黑色和咸味食物来滋阴补肾',
-                '火': '你的五行属火，性格热情开朗，适合食用红色和苦味食物来清心降火',
-                '土': '你的五行属土，性格稳重踏实，适合食用黄色和甘味食物来健脾养胃'
-            };
-            
-            return {
-                year: yearTianGan + yearDiZhi,
-                month: monthTianGan + monthDiZhi,
-                day: dayTianGan + dayDiZhi,
-                hour: hourTianGan + hourDiZhi,
-                mainElement: mainElement,
-                suitableCuisines: elementCuisines[mainElement],
-                foodTypes: elementFoodTypes[mainElement],
-                description: elementDescriptions[mainElement]
-            };
         }
 
         // 初始化社区帖子

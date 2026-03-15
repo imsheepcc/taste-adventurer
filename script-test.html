@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>脚本加载测试</title>
+</head>
+<body>
+    <h1>脚本加载测试</h1>
+    <button onclick="testScript()">测试脚本</button>
+    <div id="result"></div>
+    
+    <script src="app-complete.js"></script>
+    <script>
+        function testScript() {
+            const result = document.getElementById('result');
+            result.innerHTML = '<p>测试开始...</p>';
+            
+            // 测试函数是否存在
+            const functions = ['switchPage', 'randomRecommend', 'toggleFilter', 'spinWheel'];
+            functions.forEach(func => {
+                if (typeof window[func] === 'function') {
+                    result.innerHTML += `<p>✅ ${func} 函数存在</p>`;
+                } else {
+                    result.innerHTML += `<p>❌ ${func} 函数不存在</p>`;
+                }
+            });
+            
+            // 测试数据是否存在
+            if (typeof restaurants !== 'undefined') {
+                result.innerHTML += `<p>✅ restaurants 数据存在，共${restaurants.length}条</p>`;
+            } else {
+                result.innerHTML += `<p>❌ restaurants 数据不存在</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

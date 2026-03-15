@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工作测试页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #FFD100 0%, #FFA500 50%, #FF8C00 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+        .nav-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            background: #FFD100;
+            color: #333;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .nav-btn:hover, .nav-btn.active {
+            background: #FFA500;
+            color: white;
+            transform: translateY(-2px);
+        }
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        .page.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .feature-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #FFD100;
+        }
+        .btn {
+            background: #FFD100;
+            color: #333;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+        .btn:hover {
+            background: #FFA500;
+            color: white;
+            transform: translateY(-2px);
+        }
+        .result {
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border-left: 4px solid #4CAF50;
+        }
+        .restaurant-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .restaurant-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="text-align: center; color: #333; margin-bottom: 30px;">🍜 美食地图测试版</h1>
+        
+        <div class="nav">
+            <button class="nav-btn active" onclick="showPage('home')">首页</button>
+            <button class="nav-btn" onclick="showPage('recommend')">趣味推荐</button>
+            <button class="nav-btn" onclick="showPage('community')">美食社区</button>
+            <button class="nav-btn" onclick="showPage('map')">地图探索</button>
+        </div>
+
+        <!-- 首页 -->
+        <div class="page active" id="homePage">
+            <h2>🏠 首页</h2>
+            <div class="feature-card">
+                <h3>🎲 随机推荐</h3>
+                <p>不知道吃什么？让我们为你随机推荐一家餐厅！</p>
+                <button class="btn" onclick="randomRecommend()">随机推荐</button>
+                <div id="randomResult"></div>
+            </div>
+            
+            <div class="feature-card">
+                <h3>🍽️ 精选餐厅</h3>
+                <div id="restaurantList"></div>
+            </div>
+        </div>
+
+        <!-- 推荐页面 -->
+        <div class="page" id="recommendPage">
+            <h2>🎯 趣味推荐</h2>
+            <div class="feature-card">
+                <h3>🎰 转盘推荐</h3>
+                <p>转动转盘，让命运为你选择美食！</p>
+                <button class="btn" onclick="spinWheel()">开始转盘</button>
+                <div id="spinResult"></div>
+            </div>
+            
+            <div class="feature-card">
+                <h3>🧠 MBTI推荐</h3>
+                <p>根据你的人格类型推荐美食</p>
+                <button class="btn" onclick="mbtiRecommend()">MBTI推荐</button>
+                <div id="mbtiResult"></div>
+            </div>
+        </div>
+
+        <!-- 社区页面 -->
+        <div class="page" id="communityPage">
+            <h2>💬 美食社区</h2>
+            <div class="feature-card">
+                <h3>📝 发布动态</h3>
+                <button class="btn" onclick="postMessage()">发布动态</button>
+                <div id="communityPosts"></div>
+            </div>
+        </div>
+
+        <!-- 地图页面 -->
+        <div class="page" id="mapPage">
+            <h2>🗺️ 地图探索</h2>
+            <div class="feature-card">
+                <h3>🏫 大学城美食地图</h3>
+                <p>探索清华、北大、人大、师大周边的美食</p>
+                <div style="background: #e0f7fa; padding: 20px; border-radius: 10px; text-align: center; margin: 15px 0;">
+                    <h4>🗺️ 美食地图</h4>
+                    <p>🏫 清华大学 | 🏫 北京大学 | 🏫 人民大学 | 🏫 北京师范大学</p>
+                    <p>📍 8家精选餐厅 | 🍽️ 6种美食类型</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 餐厅数据
+        const restaurants = [
+            { id: 1, name: "老北京炸酱面馆", cuisine: "中餐", price: 18, rating: 4.5 },
+            { id: 2, name: "韩式炸鸡店", cuisine: "韩餐", price: 35, rating: 4.7 },
+            { id: 3, name: "川味小馆", cuisine: "中餐", price: 28, rating: 4.6 },
+            { id: 4, name: "日式拉面屋", cuisine: "日料", price: 42, rating: 4.8 },
+            { id: 5, name: "海底捞火锅", cuisine: "火锅", price: 85, rating: 4.9 },
+            { id: 6, name: "意式披萨店", cuisine: "西餐", price: 45, rating: 4.4 }
+        ];
+
+        let posts = [
+            { id: 1, title: "清华东门的炸酱面真的绝了！", author: "清华-张同学", time: "2小时前" },
+            { id: 2, title: "ENFP的我发现了完美的韩餐厅！", author: "北大-李同学", time: "5小时前" }
+        ];
+
+        // 页面切换
+        function showPage(pageName) {
+            console.log('切换到页面:', pageName);
+            
+            // 隐藏所有页面
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // 移除所有按钮的active状态
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // 显示目标页面
+            const targetPage = document.getElementById(pageName + 'Page');
+            if (targetPage) {
+                targetPage.classList.add('active');
+                
+                // 激活对应按钮
+                event.target.classList.add('active');
+                
+                // 初始化页面内容
+                initPage(pageName);
+            }
+        }
+
+        // 初始化页面内容
+        function initPage(pageName) {
+            switch(pageName) {
+                case 'home':
+                    renderRestaurants();
+                    break;
+                case 'community':
+                    renderPosts();
+                    break;
+            }
+        }
+
+        // 渲染餐厅列表
+        function renderRestaurants() {
+            const container = document.getElementById('restaurantList');
+            container.innerHTML = restaurants.map(restaurant => `
+                <div class="restaurant-card" onclick="showRestaurantDetail(${restaurant.id})">
+                    <h4>${restaurant.name}</h4>
+                    <p>⭐ ${restaurant.rating} 分 | 💰 人均¥${restaurant.price} | 🍽️ ${restaurant.cuisine}</p>
+                </div>
+            `).join('');
+        }
+
+        // 渲染帖子
+        function renderPosts() {
+            const container = document.getElementById('communityPosts');
+            container.innerHTML = posts.map(post => `
+                <div class="restaurant-card">
+                    <h4>${post.title}</h4>
+                    <p>👤 ${post.author} | 🕐 ${post.time}</p>
+                </div>
+            `).join('');
+        }
+
+        // 随机推荐
+        function randomRecommend() {
+            const randomRestaurant = restaurants[Math.floor(Math.random() * restaurants.length)];
+            document.getElementById('randomResult').innerHTML = `
+                <div class="result">
+                    <h4>🎉 推荐结果</h4>
+                    <p><strong>${randomRestaurant.name}</strong></p>
+                    <p>⭐ ${randomRestaurant.rating} 分 | 💰 人均¥${randomRestaurant.price}</p>
+                </div>
+            `;
+        }
+
+        // 转盘推荐
+        function spinWheel() {
+            const randomRestaurant = restaurants[Math.floor(Math.random() * restaurants.length)];
+            document.getElementById('spinResult').innerHTML = `
+                <div class="result">
+                    <h4>🎰 转盘结果</h4>
+                    <p><strong>${randomRestaurant.name}</strong></p>
+                    <p>⭐ ${randomRestaurant.rating} 分 | 💰 人均¥${randomRestaurant.price}</p>
+                </div>
+            `;
+        }
+
+        // MBTI推荐
+        function mbtiRecommend() {
+            const mbtiTypes = ['INTJ', 'ENFP', 'ISTP', 'ESFJ'];
+            const randomType = mbtiTypes[Math.floor(Math.random() * mbtiTypes.length)];
+            const randomRestaurant = restaurants[Math.floor(Math.random() * restaurants.length)];
+            
+            document.getElementById('mbtiResult').innerHTML = `
+                <div class="result">
+                    <h4>🧠 ${randomType} 推荐</h4>
+                    <p>根据你的人格类型，推荐：<strong>${randomRestaurant.name}</strong></p>
+                    <p>⭐ ${randomRestaurant.rating} 分 | 💰 人均¥${randomRestaurant.price}</p>
+                </div>
+            `;
+        }
+
+        // 发布动态
+        function postMessage() {
+            const newPost = {
+                id: posts.length + 1,
+                title: "新发布的美食动态",
+                author: "匿名用户",
+                time: "刚刚"
+            };
+            posts.unshift(newPost);
+            renderPosts();
+        }
+
+        // 显示餐厅详情
+        function showRestaurantDetail(id) {
+            const restaurant = restaurants.find(r => r.id === id);
+            alert(`餐厅详情：\n${restaurant.name}\n评分：${restaurant.rating}分\n人均：¥${restaurant.price}\n菜系：${restaurant.cuisine}`);
+        }
+
+        // 页面加载完成
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('测试页面加载完成');
+            renderRestaurants();
+        });
+
+        console.log('测试脚本加载完成');
+    </script>
+</body>
+</html>

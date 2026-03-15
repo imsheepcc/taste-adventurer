@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #FFD100 0%, #FFA500 50%, #FF8C00 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .btn {
+            background: #FFD100;
+            color: #333;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn:hover {
+            background: #FFA500;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🍜 功能测试页面</h1>
+        <p>测试基本功能是否正常工作</p>
+        
+        <button class="btn" onclick="testBasic()">测试基本功能</button>
+        <button class="btn" onclick="testClasses()">测试类加载</button>
+        <button class="btn" onclick="testNavigation()">测试导航</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function testBasic() {
+            document.getElementById('result').innerHTML = '✅ 基本JavaScript功能正常！';
+        }
+        
+        function testClasses() {
+            let result = '<h3>类加载测试:</h3><ul>';
+            
+            // 测试每个类是否存在
+            const classes = [
+                'DataAccessLayer',
+                'AnonymousSystem', 
+                'RecommendationEngine',
+                'SpinWheel',
+                'MysteryBox',
+                'MBTIRecommend',
+                'ZodiacRecommend',
+                'CalendarRecommend',
+                'CommunityForum'
+            ];
+            
+            classes.forEach(className => {
+                const exists = typeof window[className] !== 'undefined';
+                result += `<li>${className}: ${exists ? '✅' : '❌'}</li>`;
+            });
+            
+            result += '</ul>';
+            document.getElementById('result').innerHTML = result;
+        }
+        
+        function testNavigation() {
+            // 测试DOM元素是否存在
+            const elements = [
+                'homePage',
+                'recommendPage', 
+                'communityPage',
+                'mapPage'
+            ];
+            
+            let result = '<h3>DOM元素测试:</h3><ul>';
+            elements.forEach(id => {
+                const exists = document.getElementById(id) !== null;
+                result += `<li>${id}: ${exists ? '✅' : '❌'}</li>`;
+            });
+            result += '</ul>';
+            
+            document.getElementById('result').innerHTML = result;
+        }
+    </script>
+    
+    <!-- 加载所有脚本 -->
+    <script src="dataLayer.js"></script>
+    <script src="anonymousSystem.js"></script>
+    <script src="recommendationEngine.js"></script>
+    <script src="spinWheel.js"></script>
+    <script src="mysteryBox.js"></script>
+    <script src="mbtiRecommend.js"></script>
+    <script src="zodiacRecommend.js"></script>
+    <script src="calendarRecommend.js"></script>
+    <script src="communityForum.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

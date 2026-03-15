@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>调试页面</title>
+</head>
+<body>
+    <h1>JavaScript 调试</h1>
+    <div id="debug-info"></div>
+    
+    <script>
+        console.log('开始加载脚本...');
+        
+        // 检查每个脚本是否正确加载
+        window.addEventListener('load', function() {
+            const debugInfo = document.getElementById('debug-info');
+            let info = '<h2>脚本加载状态:</h2><ul>';
+            
+            // 检查类是否定义
+            info += `<li>DataAccessLayer: ${typeof DataAccessLayer !== 'undefined' ? '✅' : '❌'}</li>`;
+            info += `<li>AnonymousSystem: ${typeof AnonymousSystem !== 'undefined' ? '✅' : '❌'}</li>`;
+            info += `<li>RecommendationEngine: ${typeof RecommendationEngine !== 'undefined' ? '✅' : '❌'}</li>`;
+            info += `<li>SpinWheel: ${typeof SpinWheel !== 'undefined' ? '✅' : '❌'}</li>`;
+            info += `<li>MysteryBox: ${typeof MysteryBox !== 'undefined' ? '✅' : '❌'}</li>`;
+            info += `<li>MBTIRecommend: ${typeof MBTIRecommend !== 'undefined' ? '✅' : '❌'}</li>`;
+            info += `<li>ZodiacRecommend: ${typeof ZodiacRecommend !== 'undefined' ? '✅' : '❌'}</li>`;
+            info += `<li>CalendarRecommend: ${typeof CalendarRecommend !== 'undefined' ? '✅' : '❌'}</li>`;
+            info += `<li>CommunityForum: ${typeof CommunityForum !== 'undefined' ? '✅' : '❌'}</li>`;
+            
+            info += '</ul>';
+            debugInfo.innerHTML = info;
+            
+            console.log('所有脚本加载完成');
+        });
+    </script>
+    
+    <script src="dataLayer.js"></script>
+    <script src="anonymousSystem.js"></script>
+    <script src="recommendationEngine.js"></script>
+    <script src="spinWheel.js"></script>
+    <script src="mysteryBox.js"></script>
+    <script src="mbtiRecommend.js"></script>
+    <script src="zodiacRecommend.js"></script>
+    <script src="calendarRecommend.js"></script>
+    <script src="communityForum.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

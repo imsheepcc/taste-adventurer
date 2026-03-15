@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简化版美食地图</title>
+    <style>
+        :root {
+            --primary-color: #FFD100;
+            --secondary-color: #FFA500;
+            --text-color: #333333;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: linear-gradient(135deg, #FFD100 0%, #FFA500 50%, #FF8C00 100%);
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(255, 209, 0, 0.3);
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+        
+        .nav-logo {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+        
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.3s;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .main-content {
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .page-content {
+            display: none;
+        }
+        
+        .page-content.active {
+            display: block;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+        }
+        
+        .quick-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .btn-primary {
+            padding: 15px 35px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+            color: white;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255,107,107,0.5);
+        }
+        
+        .status-info {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-logo" onclick="showPage('home')">🍜 美食地图</a>
+            <ul class="nav-menu">
+                <li><a href="#" class="nav-link active" onclick="showPage('home')">首页</a></li>
+                <li><a href="#" class="nav-link" onclick="showPage('recommend')">趣味推荐</a></li>
+                <li><a href="#" class="nav-link" onclick="showPage('community')">美食社区</a></li>
+                <li><a href="#" class="nav-link" onclick="showPage('map')">地图探索</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <!-- 首页内容 -->
+        <div class="page-content active" id="homePage">
+            <div class="container">
+                <header class="header">
+                    <h1>🍜 大学城美食地图 🍕</h1>
+                    <p class="subtitle">✨ 为学生打造的本地美食指南 ✨</p>
+                </header>
+
+                <div class="quick-actions">
+                    <button class="btn-primary" onclick="testFunction('random')">🎲 随机推荐</button>
+                    <button class="btn-primary" onclick="testFunction('filter')">🔍 筛选美食</button>
+                    <button class="btn-primary" onclick="showPage('recommend')">🎯 趣味推荐</button>
+                    <button class="btn-primary" onclick="showPage('community')">💬 美食社区</button>
+                </div>
+                
+                <div class="status-info">
+                    <h3>📊 平台状态</h3>
+                    <p id="status-text">正在初始化...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 推荐页面 -->
+        <div class="page-content" id="recommendPage">
+            <div class="container">
+                <header class="header">
+                    <h1>🎯 趣味推荐</h1>
+                    <p>多种有趣的方式帮你选择美食</p>
+                </header>
+                <div class="status-info">
+                    <p>推荐功能正在开发中...</p>
+                    <button class="btn-primary" onclick="showPage('home')">返回首页</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 社区页面 -->
+        <div class="page-content" id="communityPage">
+            <div class="container">
+                <header class="header">
+                    <h1>💬 美食社区</h1>
+                    <p>和同学们分享美食体验</p>
+                </header>
+                <div class="status-info">
+                    <p>社区功能正在开发中...</p>
+                    <button class="btn-primary" onclick="showPage('home')">返回首页</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 地图页面 -->
+        <div class="page-content" id="mapPage">
+            <div class="container">
+                <header class="header">
+                    <h1>🗺️ 地图探索</h1>
+                    <p>在地图上发现周边美食</p>
+                </header>
+                <div class="status-info">
+                    <p>地图功能正在开发中...</p>
+                    <button class="btn-primary" onclick="showPage('home')">返回首页</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 页面切换函数
+        function showPage(pageName) {
+            console.log('切换到页面:', pageName);
+            
+            // 隐藏所有页面
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // 移除所有导航链接的active状态
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // 显示目标页面
+            const targetPage = document.getElementById(pageName + 'Page');
+            if (targetPage) {
+                targetPage.classList.add('active');
+                console.log('页面切换成功:', pageName);
+                
+                // 激活对应的导航链接
+                const navLinks = document.querySelectorAll('.nav-link');
+                navLinks.forEach(link => {
+                    if (link.textContent.includes(getPageTitle(pageName))) {
+                        link.classList.add('active');
+                    }
+                });
+            } else {
+                console.error('页面不存在:', pageName);
+            }
+        }
+        
+        // 获取页面标题
+        function getPageTitle(pageName) {
+            const titles = {
+                'home': '首页',
+                'recommend': '趣味推荐',
+                'community': '美食社区',
+                'map': '地图探索'
+            };
+            return titles[pageName] || pageName;
+        }
+        
+        // 测试功能函数
+        function testFunction(action) {
+            console.log('执行功能:', action);
+            const statusText = document.getElementById('status-text');
+            
+            switch(action) {
+                case 'random':
+                    statusText.textContent = '🎲 随机推荐功能已触发！';
+                    break;
+                case 'filter':
+                    statusText.textContent = '🔍 筛选功能已触发！';
+                    break;
+                default:
+                    statusText.textContent = `✅ ${action} 功能已触发！`;
+            }
+            
+            // 3秒后恢复状态
+            setTimeout(() => {
+                statusText.textContent = '系统运行正常 ✅';
+            }, 3000);
+        }
+        
+        // 页面初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('简化版页面加载完成');
+            document.getElementById('status-text').textContent = '系统运行正常 ✅';
+        });
+        
+        // 错误处理
+        window.addEventListener('error', function(e) {
+            console.error('JavaScript错误:', e.error);
+            document.getElementById('status-text').textContent = '❌ 系统出现错误: ' + e.message;
+        });
+        
+        console.log('简化版脚本加载完成');
+    </script>
+</body>
+</html>

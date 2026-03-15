@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>标签页测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #FFD100 0%, #FFA500 50%, #FF8C00 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .recommend-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #333;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+        .tab-btn:hover, .tab-btn.active {
+            background: #FFD100;
+            color: #333;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 209, 0, 0.4);
+        }
+        .tab-content {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .test-content {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .test-content h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .test-content p {
+            color: #666;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+        .status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="status" id="status">标签页测试</div>
+    
+    <div class="container">
+        <h1 style="text-align: center; color: #333; margin-bottom: 30px;">🎯 趣味推荐标签页测试</h1>
+        
+        <div class="recommend-tabs">
+            <button class="tab-btn active" onclick="switchRecommendTab('wheel')">🎰 转盘推荐</button>
+            <button class="tab-btn" onclick="switchRecommendTab('mystery')">🎁 盲盒惊喜</button>
+            <button class="tab-btn" onclick="switchRecommendTab('mbti')">🧠 MBTI推荐</button>
+            <button class="tab-btn" onclick="switchRecommendTab('zodiac')">⭐ 星座推荐</button>
+            <button class="tab-btn" onclick="switchRecommendTab('calendar')">📅 黄历推荐</button>
+        </div>
+
+        <div class="tab-content active" id="wheelTab">
+            <div class="test-content">
+                <h2>🎰 转盘推荐</h2>
+                <p>这是转盘推荐的内容。转动转盘，让命运为你选择美食！</p>
+                <p>当前显示：转盘推荐标签页</p>
+            </div>
+        </div>
+
+        <div class="tab-content" id="mysteryTab">
+            <div class="test-content">
+                <h2>🎁 盲盒惊喜</h2>
+                <p>这是盲盒惊喜的内容。每日限量3次，点击盒子发现惊喜美食！</p>
+                <p>当前显示：盲盒惊喜标签页</p>
+            </div>
+        </div>
+
+        <div class="tab-content" id="mbtiTab">
+            <div class="test-content">
+                <h2>🧠 MBTI推荐</h2>
+                <p>这是MBTI推荐的内容。根据你的人格类型，为你推荐最适合的美食。</p>
+                <p>当前显示：MBTI推荐标签页</p>
+            </div>
+        </div>
+
+        <div class="tab-content" id="zodiacTab">
+            <div class="test-content">
+                <h2>⭐ 星座推荐</h2>
+                <p>这是星座推荐的内容。根据你的星座特性，为你推荐最适合的美食。</p>
+                <p>当前显示：星座推荐标签页</p>
+            </div>
+        </div>
+
+        <div class="tab-content" id="calendarTab">
+            <div class="test-content">
+                <h2>📅 黄历推荐</h2>
+                <p>这是黄历推荐的内容。根据传统黄历和五行理论，为你推荐今日适宜的美食。</p>
+                <p>当前显示：黄历推荐标签页</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchRecommendTab(tabName) {
+            console.log('切换到标签页:', tabName);
+            
+            // 更新状态显示
+            document.getElementById('status').textContent = `当前标签页: ${tabName}`;
+            
+            // 更新按钮状态
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[onclick="switchRecommendTab('${tabName}')"]`).classList.add('active');
+            
+            // 切换内容
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            
+            console.log('标签页切换完成');
+        }
+
+        // 页面加载完成
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('标签页测试页面加载完成');
+            document.getElementById('status').textContent = '当前标签页: wheel (默认)';
+        });
+    </script>
+</body>
+</html>

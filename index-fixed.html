@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大学城美食地图 - 发现身边的美味</title>
+    <link rel="stylesheet" href="styles.css?v=3">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-logo" id="homeBtn">🍜 美食地图</a>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="#" class="nav-link active" data-page="home">首页</a></li>
+                <li class="nav-item"><a href="#" class="nav-link" data-page="recommend">趣味推荐</a></li>
+                <li class="nav-item"><a href="#" class="nav-link" data-page="community">美食社区</a></li>
+                <li class="nav-item"><a href="#" class="nav-link" data-page="map">地图探索</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <!-- 首页内容 -->
+        <div class="page-content active" id="homePage">
+            <div class="container">
+                <!-- 头部 -->
+                <header class="header">
+                    <h1>🍜 大学城美食地图 🍕</h1>
+                    <p class="subtitle">✨ 为学生打造的本地美食指南 ✨</p>
+                </header>
+
+                <!-- 快速操作栏 -->
+                <div class="quick-actions">
+                    <button class="btn-primary" id="randomBtn">🎲 随机推荐</button>
+                    <button class="btn-secondary" id="filterBtn">🔍 筛选美食</button>
+                    <button class="btn-primary" data-page="recommend">🎯 趣味推荐</button>
+                    <button class="btn-primary" data-page="community">💬 美食社区</button>
+                </div>
+
+                <!-- 系统状态 -->
+                <div class="status-info" style="background: rgba(255,255,255,0.9); padding: 20px; border-radius: 15px; margin: 20px 0; text-align: center;">
+                    <h3>📊 系统状态</h3>
+                    <p id="system-status">正在初始化...</p>
+                </div>
+
+                <!-- 餐厅列表 -->
+                <div class="restaurant-list" id="restaurantList">
+                    <!-- 动态生成 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 推荐页面 -->
+        <div class="page-content" id="recommendPage">
+            <div class="container">
+                <header class="page-header">
+                    <h1>🎯 趣味推荐</h1>
+                    <p>多种有趣的方式帮你选择美食</p>
+                </header>
+                <div id="recommend-content">
+                    <p>推荐功能正在加载中...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 社区页面 -->
+        <div class="page-content" id="communityPage">
+            <div class="container">
+                <header class="page-header">
+                    <h1>💬 美食社区</h1>
+                    <p>和同学们分享美食体验</p>
+                </header>
+                <div id="community-content">
+                    <p>社区功能正在加载中...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 地图页面 -->
+        <div class="page-content" id="mapPage">
+            <div class="container">
+                <header class="page-header">
+                    <h1>🗺️ 地图探索</h1>
+                    <p>在地图上发现周边美食</p>
+                </header>
+                <div id="map-content">
+                    <p>地图功能正在加载中...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 基本脚本 -->
+    <script>
+        console.log('开始加载基本脚本...');
+        
+        // 餐厅数据
+        const restaurants = [
+            {
+                id: 1,
+                name: "老北京炸酱面馆",
+                cuisine: "chinese",
+                campus: "campus1",
+                price: "low",
+                avgPrice: 18,
+                rating: 4.5,
+                distance: "200m",
+                specialty: ["炸酱面", "卤煮", "豆汁"],
+                address: "清华东路15号"
+            },
+            {
+                id: 2,
+                name: "韩式炸鸡店",
+                cuisine: "korean",
+                campus: "campus2",
+                price: "medium",
+                avgPrice: 35,
+                rating: 4.7,
+                distance: "500m",
+                specialty: ["炸鸡", "芝士球", "辣炒年糕"],
+                address: "北大南门商业街"
+            }
+        ];
+        
+        // 基本页面切换功能
+        function switchPage(pageName) {
+            console.log('切换到页面:', pageName);
+            
+            // 隐藏所有页面
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // 更新导航状态
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // 显示目标页面
+            const targetPage = document.getElementById(pageName + 'Page');
+            if (targetPage) {
+                targetPage.classList.add('active');
+                
+                // 激活对应导航
+                const navLink = document.querySelector(`[data-page="${pageName}"]`);
+                if (navLink && navLink.classList.contains('nav-link')) {
+                    navLink.classList.add('active');
+                }
+                
+                updateSystemStatus(`已切换到${pageName}页面`);
+            }
+        }
+        
+        // 更新系统状态
+        function updateSystemStatus(message) {
+            const statusElement = document.getElementById('system-status');
+            if (statusElement) {
+                statusElement.textContent = message;
+            }
+        }
+        
+        // 基本功能测试
+        function testRandomRecommend() {
+            console.log('随机推荐功能');
+            updateSystemStatus('🎲 随机推荐功能已触发！');
+            
+            setTimeout(() => {
+                updateSystemStatus('系统运行正常 ✅');
+            }, 2000);
+        }
+        
+        function testFilter() {
+            console.log('筛选功能');
+            updateSystemStatus('🔍 筛选功能已触发！');
+            
+            setTimeout(() => {
+                updateSystemStatus('系统运行正常 ✅');
+            }, 2000);
+        }
+        
+        // 设置事件监听器
+        function setupEventListeners() {
+            console.log('设置事件监听器...');
+            
+            // 导航链接
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const page = e.target.dataset.page;
+                    if (page) {
+                        switchPage(page);
+                    }
+                });
+            });
+            
+            // 首页logo
+            const homeBtn = document.getElementById('homeBtn');
+            if (homeBtn) {
+                homeBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    switchPage('home');
+                });
+            }
+            
+            // 快速操作按钮
+            document.querySelectorAll('[data-page]').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const page = e.target.dataset.page;
+                    if (page) {
+                        switchPage(page);
+                    }
+                });
+            });
+            
+            // 功能按钮
+            const randomBtn = document.getElementById('randomBtn');
+            if (randomBtn) {
+                randomBtn.addEventListener('click', testRandomRecommend);
+            }
+            
+            const filterBtn = document.getElementById('filterBtn');
+            if (filterBtn) {
+                filterBtn.addEventListener('click', testFilter);
+            }
+            
+            console.log('事件监听器设置完成');
+        }
+        
+        // 渲染餐厅列表
+        function renderRestaurants() {
+            const restaurantList = document.getElementById('restaurantList');
+            if (!restaurantList) return;
+            
+            restaurantList.innerHTML = restaurants.map(restaurant => `
+                <div class="restaurant-card" style="background: white; padding: 20px; margin: 10px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <h3>${restaurant.name}</h3>
+                    <p>⭐ ${restaurant.rating} 分 | 💰 人均¥${restaurant.avgPrice} | 📍 ${restaurant.distance}</p>
+                    <p>🍽️ ${restaurant.specialty.join('、')}</p>
+                </div>
+            `).join('');
+        }
+        
+        // 页面初始化
+        function init() {
+            console.log('开始初始化页面...');
+            
+            try {
+                setupEventListeners();
+                renderRestaurants();
+                updateSystemStatus('系统运行正常 ✅');
+                console.log('页面初始化完成');
+            } catch (error) {
+                console.error('初始化失败:', error);
+                updateSystemStatus('❌ 系统初始化失败: ' + error.message);
+            }
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', init);
+        
+        // 错误处理
+        window.addEventListener('error', function(e) {
+            console.error('JavaScript错误:', e.error);
+            updateSystemStatus('❌ 系统错误: ' + e.message);
+        });
+        
+        console.log('基本脚本加载完成');
+    </script>
+</body>
+</html>
